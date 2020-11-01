@@ -1,12 +1,12 @@
 const canvasLayers = {}
 
-document.querySelectorAll("canvas").forEach(canvasLayer => {
-  canvasLayer.width = 360 * 2
-  canvasLayer.height = 640 * 2
+document.querySelectorAll("canvas").forEach(canvas => {
+  canvas.width = 720
+  canvas.height = 1280
 
-  canvasLayers[canvasLayer.id] = {
-    canvas: canvasLayer,
-    ctx: canvasLayer.getContext("2d"),
+  canvasLayers[canvas.id] = {
+    canvas,
+    ctx: canvas.getContext("2d"),
   }
 })
 

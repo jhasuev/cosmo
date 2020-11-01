@@ -1,4 +1,7 @@
-import { canvas_user as canvas, ctx_user as ctx } from "./canvas.js"
+import {
+  canvas_user as canvas,
+  ctx_user as ctx
+} from "./canvas.js"
 
 function Movement() {
   this.x = 0
@@ -8,8 +11,8 @@ function Movement() {
   canvas.addEventListener("mousemove", (e) => {
     e = e || event
 
-    let canvasWidth = this.styles['width']
-    let canvasHeight = this.styles['height']
+    let canvasWidth = this.styles.width
+    let canvasHeight = this.styles.height
 
     let percentCursourX = e.layerX / canvasWidth * 100
     let percentCursourY = e.layerY / canvasHeight * 100
