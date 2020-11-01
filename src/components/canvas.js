@@ -10,8 +10,8 @@ document.querySelectorAll("canvas").forEach(canvas => {
   }
 })
 
-export const canvas_enimy = canvasLayers.enimy.canvas
-export const ctx_enimy = canvasLayers.enimy.ctx
+export const canvas_enemy = canvasLayers.enemy.canvas
+export const ctx_enemy = canvasLayers.enemy.ctx
 
 export const canvas_info = canvasLayers.info.canvas
 export const ctx_info = canvasLayers.info.ctx
