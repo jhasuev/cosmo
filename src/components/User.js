@@ -29,7 +29,7 @@ function User() {
   this.drawUser = () => {
     ctx.beginPath()
     ctx.rect(this.position.x, this.position.y, this.width, this.height)
-    ctx.fillStyle = 'red'
+    ctx.fillStyle = '#73c902'
     ctx.fill()
   }
 
