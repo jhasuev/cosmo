@@ -3,7 +3,7 @@ import {
   ctx_user as ctx
 } from "./canvas.js"
 
-function Movement() {
+export default new function(){
   this.x = 0
   this.y = 0
   this.styles = {}
@@ -39,4 +39,3 @@ function Movement() {
 
   return this
 }
-export default new Movement()

@@ -3,7 +3,7 @@ import {
   ctx_user as ctx
 } from "./canvas.js"
 
-function User() {
+export default new function(){
   this.width = 50
   this.height = 50
 
@@ -45,5 +45,3 @@ function User() {
 
   return this
 }
-
-export default new User()

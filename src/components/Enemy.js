@@ -3,7 +3,7 @@ import {
   ctx_enemy as ctx
 } from "./canvas.js"
 
-function Enemy() {
+export default new function(){
   this.conf = {
     width: 50,
     height: 50,
@@ -101,5 +101,3 @@ function Enemy() {
 
   return this
 }
-
-export default new Enemy()
