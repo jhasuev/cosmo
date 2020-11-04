@@ -18,3 +18,6 @@ export const ctx_info = canvasLayers.info.ctx
 
 export const canvas_user = canvasLayers.user.canvas
 export const ctx_user = canvasLayers.user.ctx
+
+export const canvas_shooting = canvasLayers.shooting.canvas
+export const ctx_shooting = canvasLayers.shooting.ctx
