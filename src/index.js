@@ -9,6 +9,7 @@ Shooting.setPositions(User.position.x + User.width / 2, User.position.y)
 User.drawUser()
 Enemy.start()
 
+/*
 setTimeout(() => {
   Enemy.stop()
   Shooting.stop()
@@ -18,6 +19,7 @@ setTimeout(() => {
     Shooting.start()
   }, 2222)
 }, 2222)
+ */
 
 Movement.onmove = () => {
   User.move(Movement.x, Movement.y)

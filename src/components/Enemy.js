@@ -99,5 +99,13 @@ export default new function(){
     }
   }
 
+  this.enemyHit = enemyIDX => {
+    // снижаем хп у противника
+    if (--this.enemies[enemyIDX].leftBits <= 0) {
+      // убиваем противника, если у него закончилось хп
+      this.enemies.splice(enemyIDX, 1)
+    }
+  }
+
   return this
 }

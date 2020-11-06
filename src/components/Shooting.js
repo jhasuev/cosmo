@@ -2,6 +2,7 @@ import {
   canvas_shooting as canvas,
   ctx_shooting as ctx
 } from "./canvas.js"
+import Enemy from './Enemy.js'
 
 export default new function(){
   this.position = { x: null, y: null }
@@ -36,6 +37,21 @@ export default new function(){
       if (bullet.y + this.conf.size / 2 <= 0) {
         disapperedBullets.push(bulletID)
       }
+
+      Enemy.enemies.forEach((enemy, enemyIDX) => {
+        if (
+               enemy.y + Enemy.conf.height > bullet.y - this.conf.size / 2
+            && enemy.y < bullet.y + this.conf.size / 2
+            && enemy.x + Enemy.conf.width > bullet.x - this.conf.size / 2
+            && enemy.x < bullet.x + this.conf.size / 2
+        ) {
+          // бъем по поражению / противнику
+          Enemy.enemyHit(enemyIDX)
+
+          // убираем пулю / снаряд
+          disapperedBullets.push(bulletID)
+        }
+      })
     })
 
     this.remove(disapperedBullets)
