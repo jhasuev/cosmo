@@ -2,6 +2,7 @@ import {
   canvas_enemy as canvas,
   ctx_enemy as ctx
 } from "./canvas.js"
+import Shooting from './Shooting.js'
 
 export default new function(){
   this.conf = {
@@ -60,7 +61,6 @@ export default new function(){
       ctx.fill()
     })
   }
-  this.drawEnemies()
 
   this.move = () => {
     this.enemies.forEach(enemy => {
@@ -104,6 +104,7 @@ export default new function(){
     if (--this.enemies[enemyIDX].leftBits <= 0) {
       // убиваем противника, если у него закончилось хп
       this.enemies.splice(enemyIDX, 1)
+      if(Shooting.bulletCount < 3) Shooting.bulletCount++
     }
   }
 

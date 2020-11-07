@@ -8,6 +8,7 @@ export default new function(){
   this.position = { x: null, y: null }
 
   this.conf = {
+    offsets: 1.5, // расстаянние между шарами (пульками)
     size: 10, // ball size | px
     step: 10, // move step | px
     speed: 5, // time for each step | ms
@@ -15,6 +16,7 @@ export default new function(){
   }
 
   this.bullets = []
+  this.bulletCount = 1
 
   this.moveTimer = null
   this.addTimer = null
@@ -23,7 +25,7 @@ export default new function(){
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     this.bullets.forEach(bullet => {
       ctx.beginPath()
-      ctx.arc(bullet.x, bullet.y, this.conf.size, 0, 2 * Math.PI)
+      ctx.arc(bullet.x, bullet.y, bullet.size, 0, 2 * Math.PI)
       ctx.fillStyle = "#dc4a07"
       ctx.fill()
     })
@@ -34,16 +36,18 @@ export default new function(){
     this.bullets.forEach((bullet, bulletID) => {
       bullet.y -= this.conf.step
 
-      if (bullet.y + this.conf.size / 2 <= 0) {
+      // не знаю пока почему, но пульки умирают раньше времени
+      // поэтому поставлю вот такой вот костыл пока что...
+      if (bullet.y + bullet.size / 2 < -333) {
         disapperedBullets.push(bulletID)
       }
 
       Enemy.enemies.forEach((enemy, enemyIDX) => {
         if (
-               enemy.y + Enemy.conf.height > bullet.y - this.conf.size / 2
-            && enemy.y < bullet.y + this.conf.size / 2
-            && enemy.x + Enemy.conf.width > bullet.x - this.conf.size / 2
-            && enemy.x < bullet.x + this.conf.size / 2
+               enemy.y + Enemy.conf.height > bullet.y - bullet.size / 2
+            && enemy.y < bullet.y + bullet.size / 2
+            && enemy.x + Enemy.conf.width > bullet.x - bullet.size / 2
+            && enemy.x < bullet.x + bullet.size / 2
         ) {
           // бъем по поражению / противнику
           Enemy.enemyHit(enemyIDX)
@@ -60,10 +64,27 @@ export default new function(){
   this.add = () => {
     if (!isFinite(this.position.x) || !isFinite(this.position.y)) return;
 
-    this.bullets.push({
-      x: this.position.x,
-      y: this.position.y
-    })
+    // размеры пушек, взависимости от их количество
+    let sizes = [
+          this.conf.size,
+          this.conf.size / 1.5,
+          this.conf.size / 2,
+          this.conf.size / 2.5,
+        ],
+        size = sizes[this.bulletCount - 1] || sizes[sizes.length - 1]
+
+    let x = this.position.x - (size * this.conf.offsets) * this.bulletCount
+    x += size * this.conf.offsets
+
+    for (let i = 0; i < this.bulletCount; i++){
+      x += (size * this.conf.offsets) * 2 * (!!i * 1)
+      this.bullets.push({
+        size,
+        x,
+        y: this.position.y,
+      })
+    }
+
   }
   
   this.remove = (bulletIDs) => {
