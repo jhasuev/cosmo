@@ -104,7 +104,7 @@ export default new function(){
     if (--this.enemies[enemyIDX].leftBits <= 0) {
       // убиваем противника, если у него закончилось хп
       this.enemies.splice(enemyIDX, 1)
-      if(Shooting.bulletCount < 3) Shooting.bulletCount++
+      Shooting.bulletCount++
     }
   }
 

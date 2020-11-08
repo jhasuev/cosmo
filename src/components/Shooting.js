@@ -8,7 +8,7 @@ export default new function(){
   this.position = { x: null, y: null }
 
   this.conf = {
-    offsets: 1.5, // расстаянние между шарами (пульками)
+    offsets: 2, // расстаянние между шарами (пульками)
     size: 10, // ball size | px
     step: 10, // move step | px
     speed: 5, // time for each step | ms
@@ -35,6 +35,13 @@ export default new function(){
     let disapperedBullets = []
     this.bullets.forEach((bullet, bulletID) => {
       bullet.y -= this.conf.step
+
+      let xTo = bullet.xStart / 10
+      if (xTo) {
+        bullet.xStart -= xTo
+        bullet.x += xTo
+        bullet.y += Math.abs(xTo) * (Math.abs(xTo) / 10)
+      }
 
       // не знаю пока почему, но пульки умирают раньше времени
       // поэтому поставлю вот такой вот костыл пока что...
@@ -73,14 +80,15 @@ export default new function(){
         ],
         size = sizes[this.bulletCount - 1] || sizes[sizes.length - 1]
 
-    let x = this.position.x - (size * this.conf.offsets) * this.bulletCount
-    x += size * this.conf.offsets
+    let xStart = this.position.x - (size * this.conf.offsets) * this.bulletCount
+    xStart += size * this.conf.offsets
 
     for (let i = 0; i < this.bulletCount; i++){
-      x += (size * this.conf.offsets) * 2 * (!!i * 1)
+      xStart += (size * this.conf.offsets) * 2 * (!!i * 1)
       this.bullets.push({
         size,
-        x,
+        xStart: xStart - this.position.x,
+        x: this.position.x,
         y: this.position.y,
       })
     }
