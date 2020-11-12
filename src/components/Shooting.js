@@ -50,17 +50,18 @@ export default new function(){
       }
 
       Enemy.enemies.forEach((enemy, enemyIDX) => {
-        if (
-               enemy.y + Enemy.conf.height > bullet.y - bullet.size / 2
-            && enemy.y < bullet.y + bullet.size / 2
-            && enemy.x + Enemy.conf.width > bullet.x - bullet.size / 2
-            && enemy.x < bullet.x + bullet.size / 2
-        ) {
-          // бъем по поражению / противнику
-          Enemy.enemyHit(enemyIDX)
+        switch(false){
+          case enemy.y + Enemy.conf.height > bullet.y - bullet.size / 2 :break;
+          case enemy.y < bullet.y + bullet.size / 2 :break;
+          case enemy.x + Enemy.conf.width > bullet.x - bullet.size / 2 :break;
+          case enemy.x < bullet.x + bullet.size / 2 :break;
 
-          // убираем пулю / снаряд
-          disapperedBullets.push(bulletID)
+          default:
+            // бъем по поражению / противнику
+            Enemy.enemyHit(enemyIDX)
+
+            // убираем пулю / снаряд
+            disapperedBullets.push(bulletID)
         }
       })
     })
@@ -80,8 +81,7 @@ export default new function(){
         ],
         size = sizes[this.bulletCount - 1] || sizes[sizes.length - 1]
 
-    let xStart = this.position.x - (size * this.conf.offsets) * this.bulletCount
-    xStart += size * this.conf.offsets
+    let xStart = this.position.x - (size * this.conf.offsets) * this.bulletCount + size * this.conf.offsets
 
     for (let i = 0; i < this.bulletCount; i++){
       xStart += (size * this.conf.offsets) * 2 * (!!i * 1)
@@ -95,7 +95,7 @@ export default new function(){
 
   }
   
-  this.remove = (bulletIDs) => {
+  this.remove = bulletIDs => {
     bulletIDs.forEach(bulletID => this.bullets.splice(bulletID, 1))
   }
 
@@ -109,9 +109,7 @@ export default new function(){
     }, this.conf.speed)
 
     this.addTimer = setInterval(() => {
-      if (!this.addTimer) return;
-
-      this.add()
+      if (this.addTimer) this.add()
     }, this.conf.interval)
   }
 

@@ -8,17 +8,15 @@ export default new function(){
   this.y = 0
   this.styles = {}
 
-  canvas.addEventListener("mousemove", (e) => {
-    e = e || event
-
+  canvas.addEventListener("mousemove", (event) => {
     let canvasWidth = this.styles.width
     let canvasHeight = this.styles.height
 
-    let percentCursourX = e.layerX / canvasWidth * 100
-    let percentCursourY = e.layerY / canvasHeight * 100
+    let percentCursorX = event.layerX / canvasWidth * 100
+    let percentCursorY = event.layerY / canvasHeight * 100
 
-    this.x = canvas.width / 100 * percentCursourX
-    this.y = canvas.height / 100 * percentCursourY
+    this.x = canvas.width / 100 * percentCursorX
+    this.y = canvas.height / 100 * percentCursorY
 
     // fallback function
     if (this.onmove) this.onmove()
