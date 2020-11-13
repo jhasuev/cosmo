@@ -1,13 +1,14 @@
 import {
   canvas_enemy as canvas,
-  ctx_enemy as ctx
+  ctx_enemy as ctx,
+  loadImage
 } from "./canvas.js"
 import Shooting from './Shooting.js'
 
 export default new function(){
   this.conf = {
-    width: 50,
-    height: 50,
+    width: 548 / 7,
+    height: 754 / 7,
     fz: 20
   }
   this.enemies = [
@@ -44,17 +45,31 @@ export default new function(){
   ]
   this.timer = false
 
+  this.enemyImageElement = null
+
+  loadImage("assets/img/enemy-starship.png",(img, type) => {
+    if (type === 'load') {
+      this.enemyImageElement = img
+    }
+  })
+
   this.drawEnemies = () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     this.enemies.forEach(enemy => {
       ctx.beginPath()
-      ctx.rect(enemy.x, enemy.y, this.conf.width, this.conf.height)
-      ctx.fillStyle = 'orange'
+
+      if (this.enemyImageElement) {
+        ctx.drawImage(this.enemyImageElement, enemy.x, enemy.y, this.conf.width, this.conf.height)
+      } else {
+        ctx.rect(enemy.x, enemy.y, this.conf.width, this.conf.height)
+        ctx.fillStyle = 'red'
+      }
+
       ctx.fill()
 
       ctx.beginPath()
       ctx.font = `bold ${this.conf.fz}px "Trebuchet MS"`
-      ctx.fillStyle = '#9f1800'
+      ctx.fillStyle = '#fff'
       ctx.textAlign = 'center'
       ctx.textBaseline = 'middle'
       ctx.fillText(enemy.leftBits, enemy.x + (this.conf.width / 2), enemy.y + (this.conf.height / 2))

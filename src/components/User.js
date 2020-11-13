@@ -1,11 +1,21 @@
 import {
   canvas_user as canvas,
-  ctx_user as ctx
+  ctx_user as ctx,
+  loadImage
 } from "./canvas.js"
 
 export default new function(){
-  this.width = 50
-  this.height = 50
+  this.width = 444 / 4
+  this.height = 376 / 4
+  this.userImageElement = null
+
+  loadImage("assets/img/user-starship.png",(img, type) => {
+    if (type === 'load') {
+      this.userImageElement = img
+      this.remove()
+      this.drawUser()
+    }
+  })
 
   this.position = { x :  0, y : 0 }
 
@@ -28,8 +38,12 @@ export default new function(){
 
   this.drawUser = () => {
     ctx.beginPath()
-    ctx.rect(this.position.x, this.position.y, this.width, this.height)
-    ctx.fillStyle = '#73c902'
+    if (this.userImageElement) {
+      ctx.drawImage(this.userImageElement, this.position.x, this.position.y, this.width, this.height)
+    } else {
+      ctx.rect(this.position.x, this.position.y, this.width, this.height)
+      ctx.fillStyle = '#73c902'
+    }
     ctx.fill()
   }
 
@@ -40,7 +54,7 @@ export default new function(){
   }
 
   this.remove = () => {
-    ctx.clearRect(this.position.x - 1, this.position.y - 1, this.width + 2, this.height + 2)
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
   }
 
   return this

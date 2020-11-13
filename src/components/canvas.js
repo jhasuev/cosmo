@@ -21,3 +21,13 @@ export const ctx_user = canvasLayers.user.ctx
 
 export const canvas_shooting = canvasLayers.shooting.canvas
 export const ctx_shooting = canvasLayers.shooting.ctx
+
+
+export function loadImage(src, fb) {
+  let img = new Image()
+  img.src = src
+  img.onload = img.onerror = (event) => {
+    fb(img, event.type)
+  }
+  return img
+}
