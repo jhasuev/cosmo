@@ -43,9 +43,7 @@ export default new function(){
         bullet.y += Math.abs(xTo) * (Math.abs(xTo) / 10)
       }
 
-      // не знаю пока почему, но пульки умирают раньше времени
-      // поэтому поставлю вот такой вот костыл пока что...
-      if (bullet.y + bullet.size / 2 < -333) {
+      if (bullet.y + bullet.size / 2 < 0) {
         disapperedBullets.push(bulletID)
       }
 
@@ -96,7 +94,12 @@ export default new function(){
   }
   
   this.remove = bulletIDs => {
-    bulletIDs.forEach(bulletID => this.bullets.splice(bulletID, 1))
+    bulletIDs.forEach(bulletID => {
+      // проверок много не бывает
+      if (this.bullets[bulletID].y + this.bullets[bulletID].size / 2 < 0) {
+        this.bullets.splice(bulletID, 1)
+      }
+    })
   }
 
   this.start = () => {
