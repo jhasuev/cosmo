@@ -73,13 +73,12 @@ export default new function(){
       let bulletStartY = bullet.y
       let bulletStopY = bullet.y + bullet.height
 
-      // Enemy.enemies.forEach((enemy, enemyIDX) => {
       for(let enemyIDX in Enemy.enemies) {
         let enemy = Enemy.enemies[enemyIDX]
         switch(false){
           case enemy.x + Enemy.conf.width > bulletStartX :break;
           case enemy.x < bulletStopX :break;
-          case enemy.y + Enemy.conf.height > bulletStartY :break;
+          case enemy.y + Enemy.conf.height / 1.5 > bulletStartY :break;
           case enemy.y < bulletStopY :break;
 
           default:
@@ -93,7 +92,6 @@ export default new function(){
             return;
         }
       }
-      // })
     })
 
     this.remove(disapperedBullets)
@@ -156,12 +154,14 @@ export default new function(){
   this.start = () => {
     if (this.moveTimer) this.stop()
 
+    // движение пул
     this.moveTimer = setInterval(() => {
       if (!this.moveTimer) return;
 
       this.move()
     }, this.speed)
 
+    // создание/добавление новых пул
     this.addTimer = setInterval(() => {
       if (this.addTimer) this.add()
     }, this.interval)

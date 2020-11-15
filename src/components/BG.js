@@ -16,7 +16,7 @@ export default new function(){
     ]
 
     loadImage("assets/img/bg.jpg",(img, type) => {
-        if (type === 'load') {
+        if (type === 'success') {
             this.bgImageElement = img
             this.draw()
             setInterval(this.move, 1000 / 100)
