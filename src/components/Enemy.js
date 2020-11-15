@@ -1,9 +1,9 @@
 import {
   canvas_enemy as canvas,
-  ctx_enemy as ctx,
-  loadImage
+  ctx_enemy as ctx
 } from "./canvas.js"
 import Shooting from './Shooting.js'
+import loadImage from '../helpers/index'
 
 export default new function(){
   this.conf = {
@@ -48,7 +48,7 @@ export default new function(){
   this.enemyImageElement = null
 
   loadImage("assets/img/enemy-starship.png",(img, type) => {
-    if (type === 'load') {
+    if (type === 'success') {
       this.enemyImageElement = img
     }
   })
