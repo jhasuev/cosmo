@@ -1,8 +1,8 @@
 import {
     canvas_bg as canvas,
-    ctx_bg as ctx,
-    loadImage
+    ctx_bg as ctx
 } from "./canvas.js"
+import loadImage from '../helpers/index'
 
 export default new function(){
     this.bgImageElement = null
@@ -19,6 +19,7 @@ export default new function(){
         if (type === 'load') {
             this.bgImageElement = img
             this.draw()
+            setInterval(this.move, 1000 / 100)
         }
     })
 
@@ -37,8 +38,6 @@ export default new function(){
         }
     }
 
-    this.draw()
-
     this.move = () => {
         let mustReset = this.bgImages[0].y >= 0
         this.bgImages.forEach((img, idx) => {
@@ -50,8 +49,6 @@ export default new function(){
         })
         this.draw()
     }
-
-    setInterval(this.move, 1000 / 100)
 
     return this;
 }

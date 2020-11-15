@@ -1,8 +1,8 @@
 import {
   canvas_user as canvas,
-  ctx_user as ctx,
-  loadImage
+  ctx_user as ctx
 } from "./canvas.js"
+import loadImage from '../helpers/index'
 
 export default new function(){
   this.width = 444 / 4
@@ -10,7 +10,7 @@ export default new function(){
   this.userImageElement = null
 
   loadImage("assets/img/user-starship.png",(img, type) => {
-    if (type === 'load') {
+    if (type === 'success') {
       this.userImageElement = img
       this.remove()
       this.drawUser()

@@ -1,9 +1,9 @@
 import {
   canvas_shooting as canvas,
-  ctx_shooting as ctx,
-  loadImage
+  ctx_shooting as ctx
 } from "./canvas.js"
 import Enemy from './Enemy.js'
+import loadImage from '../helpers/index'
 
 export default new function(){
   this.position = { x: null, y: null }
@@ -27,7 +27,7 @@ export default new function(){
 
 
   loadImage("assets/img/bullet1.png",(img, type) => {
-    if (type === 'load') {
+    if (type === 'success') {
       this.bulletImageElement = img
     }
   })
