@@ -8,13 +8,14 @@ import Enemy from './Enemy.js'
 export default new function(){
   this.position = { x: null, y: null }
 
-  this.conf = {
-    offsets: 1.2, // расстаянние между шарами (пульками)
-    size: 20, // ball size | px
-    step: 10, // move step | px
-    speed: 5, // time for each step | ms
-    interval: 100, // interval between create a new bullet | ms
-  }
+  this.offsets = 2
+
+  this.width = 88 / 5
+  this.height = 272 / 5
+
+  this.step = 10
+  this.speed = 20
+  this.interval = 500
 
   this.bulletImageElement = null
 
@@ -25,7 +26,7 @@ export default new function(){
   this.addTimer = null
 
 
-  loadImage("assets/img/bullet.png",(img, type) => {
+  loadImage("assets/img/bullet1.png",(img, type) => {
     if (type === 'load') {
       this.bulletImageElement = img
     }
@@ -34,29 +35,26 @@ export default new function(){
   this.draw = () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     this.bullets.forEach(bullet => {
-      ctx.beginPath()
-
       if (this.bulletImageElement) {
+        ctx.beginPath()
         ctx.drawImage(
             this.bulletImageElement,
-            bullet.x - bullet.size / 2,
-            bullet.y - bullet.size / 2,
-            this.conf.size,
-            this.conf.size
+            bullet.x,
+            bullet.y,
+            this.width,
+            this.height
         )
-      } else {
-        ctx.arc(bullet.x, bullet.y, bullet.size, 0, 2 * Math.PI)
-        ctx.fillStyle = "#dc4a07"
+        ctx.fill()
       }
-
-      ctx.fill()
     })
   }
 
   this.goNext = () => {
+    if (!this.bulletImageElement) return;
+
     let disapperedBullets = []
     this.bullets.forEach((bullet, bulletID) => {
-      bullet.y -= this.conf.step
+      bullet.y -= this.step
 
       let xTo = bullet.xStart / 5
       if (xTo) {
@@ -65,21 +63,24 @@ export default new function(){
         bullet.y += Math.abs(xTo) * (Math.abs(xTo) / 20)
       }
 
-      if (bullet.y + bullet.size / 2 < 0) {
+      if (bullet.y + bullet.height < 0) {
         disapperedBullets.push(bulletID)
+        return;
       }
 
-      let bulletStartY = bullet.y - bullet.size / 2
-      let bulletStopY = bullet.y + bullet.size / 2
-      let bulletStartX = bullet.x - bullet.size / 2
-      let bulletStopX = bullet.x + bullet.size / 2
+      let bulletStartX = bullet.x
+      let bulletStopX = bullet.x + bullet.width
+      let bulletStartY = bullet.y
+      let bulletStopY = bullet.y + bullet.height
 
-      Enemy.enemies.forEach((enemy, enemyIDX) => {
+      // Enemy.enemies.forEach((enemy, enemyIDX) => {
+      for(let enemyIDX in Enemy.enemies) {
+        let enemy = Enemy.enemies[enemyIDX]
         switch(false){
-          case enemy.y + Enemy.conf.height > bulletStartY :break;
-          case enemy.y < bulletStopY :break;
           case enemy.x + Enemy.conf.width > bulletStartX :break;
           case enemy.x < bulletStopX :break;
+          case enemy.y + Enemy.conf.height > bulletStartY :break;
+          case enemy.y < bulletStopY :break;
 
           default:
             // бъем по поражению / противнику
@@ -88,8 +89,11 @@ export default new function(){
             // убираем пулю / снаряд
             disapperedBullets.push(bulletID)
             this.bullets[bulletID].inEnemy = true
+
+            return;
         }
-      })
+      }
+      // })
     })
 
     this.remove(disapperedBullets)
@@ -100,21 +104,34 @@ export default new function(){
 
     // размеры пушек, взависимости от их количество
     let sizes = [
-          this.conf.size,
-          this.conf.size / 1.5,
-          this.conf.size / 2,
-          this.conf.size / 2.5,
-        ],
-        size = sizes[this.bulletCount - 1] || sizes[sizes.length - 1]
+          {
+            width: this.width,
+            height: this.height
+          },
+          {
+            width: this.width  / 1.5,
+            height: this.height  / 1.5
+          },
+          {
+            width: this.width / 2,
+            height: this.height / 2
+          },
+          {
+            width: this.width / 2.5,
+            height: this.height / 2.5
+          },
+        ]
+    let size = sizes[this.bulletCount - 1] || sizes[sizes.length - 1]
 
-    let xStart = this.position.x - (size * this.conf.offsets) * this.bulletCount + size * this.conf.offsets
+    let xStart = this.position.x - (size.width * this.offsets) * this.bulletCount + size.width * this.offsets
 
     for (let i = 0; i < this.bulletCount; i++){
-      xStart += (size * this.conf.offsets) * 2 * (!!i * 1)
+      xStart += (size.width * this.offsets) * 2 * (!!i * 1)
       this.bullets.push({
-        size,
+        width: size.width,
+        height: size.height,
         xStart: xStart - this.position.x,
-        x: this.position.x,
+        x: this.position.x - size.width / 2,
         y: this.position.y - this.bulletCount * 5,
       })
     }
@@ -124,8 +141,13 @@ export default new function(){
   this.remove = bulletIDs => {
     bulletIDs.forEach(bulletID => {
       if (!this.bullets[bulletID]) return;
-      // проверок много не бывает
-      if (this.bullets[bulletID].y + this.bullets[bulletID].size / 2 < 0 || this.bullets[bulletID].inEnemy) {
+      // убираем пулю
+      if (
+          // если она за пределами холста
+          this.bullets[bulletID].y + this.bullets[bulletID].height < 0
+          // или сбил врага
+          || this.bullets[bulletID].inEnemy
+      ) {
         this.bullets.splice(bulletID, 1)
       }
     })
@@ -138,11 +160,11 @@ export default new function(){
       if (!this.moveTimer) return;
 
       this.move()
-    }, this.conf.speed)
+    }, this.speed)
 
     this.addTimer = setInterval(() => {
       if (this.addTimer) this.add()
-    }, this.conf.interval)
+    }, this.interval)
   }
 
   this.move = () => {
