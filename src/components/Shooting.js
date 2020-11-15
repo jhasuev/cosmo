@@ -87,6 +87,7 @@ export default new function(){
 
             // убираем пулю / снаряд
             disapperedBullets.push(bulletID)
+            this.bullets[bulletID].inEnemy = true
         }
       })
     })
@@ -122,8 +123,9 @@ export default new function(){
   
   this.remove = bulletIDs => {
     bulletIDs.forEach(bulletID => {
+      if (!this.bullets[bulletID]) return;
       // проверок много не бывает
-      if (this.bullets[bulletID].y + this.bullets[bulletID].size / 2 < 0) {
+      if (this.bullets[bulletID].y + this.bullets[bulletID].size / 2 < 0 || this.bullets[bulletID].inEnemy) {
         this.bullets.splice(bulletID, 1)
       }
     })

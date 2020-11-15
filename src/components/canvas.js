@@ -13,6 +13,9 @@ document.querySelectorAll("canvas").forEach(canvas => {
 export const canvas_enemy = canvasLayers.enemy.canvas
 export const ctx_enemy = canvasLayers.enemy.ctx
 
+export const canvas_bg = canvasLayers.bg.canvas
+export const ctx_bg = canvasLayers.bg.ctx
+
 export const canvas_info = canvasLayers.info.canvas
 export const ctx_info = canvasLayers.info.ctx
 

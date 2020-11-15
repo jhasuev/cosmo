@@ -1,4 +1,5 @@
 import './scss/main.scss'
+import './components/BG.js'
 import User from './components/User.js'
 import Movement from './components/Movement.js'
 import Enemy from './components/Enemy.js'
@@ -38,3 +39,6 @@ Movement.onmove = () => {
 
   Shooting.setPositions(x, y)
 }
+
+
+document.body.style.backgroundImage = "url(assets/img/bg.jpg)"
