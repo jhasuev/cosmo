@@ -9,14 +9,14 @@ import { loadImage } from '../helpers/index'
 export default new function(){
   this.position = { x: null, y: null }
 
-  this.offsets = 2
+  this.offsets = 1.2
 
   this.width = 88 / 5
   this.height = 272 / 5
 
   this.step = 10
-  this.speed = 20
-  this.interval = 500
+  this.speed = 5
+  this.interval = 300
 
   this.bulletImageElement = null
 

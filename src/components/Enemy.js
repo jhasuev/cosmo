@@ -9,40 +9,11 @@ export default new function(){
   this.conf = {
     width: 548 / 7,
     height: 754 / 7,
-    fz: 20
+    fz: 20,
+    shakeDistance: 20,
   }
-  this.enemies = [
-    {
-      x: 50,
-      y: 100,
-      leftBits: 10,
-    },
-    {
-      x: 150,
-      y: 100,
-      leftBits: 10,
-    },
-    {
-      x: 250,
-      y: 100,
-      leftBits: 10,
-    },
-    {
-      x: 350,
-      y: 100,
-      leftBits: 10,
-    },
-    {
-      x: 450,
-      y: 100,
-      leftBits: 10,
-    },
-    {
-      x: 550,
-      y: 100,
-      leftBits: 10,
-    },
-  ]
+  this.enemyHitCounts = 10;
+  this.enemies = []
   this.timer = false
 
   this.enemyImageElement = null
@@ -80,19 +51,33 @@ export default new function(){
   this.move = () => {
     this.enemies.forEach(enemy => {
 
-      if(!isFinite(enemy.shakeX)) {
-        enemy.shakeX = 0
+      if(!('originX' in enemy)) {
+        enemy.originX = enemy.x
+        enemy.shakeXDirection = true
+      }
+
+      // слишком вправо ушло, меняем направление движения (возвращаем влево)
+      if (enemy.x > enemy.originX + this.conf.shakeDistance) {
         enemy.shakeXDirection = false
       }
 
-      if (Math.abs(enemy.shakeX) >= 3) {
-        enemy.shakeXDirection = !enemy.shakeXDirection
+      // слишком влево ушло, меняем направление движения (возвращаем вправо)
+      if (enemy.x < enemy.originX - this.conf.shakeDistance) {
+        enemy.shakeXDirection = true
       }
 
-      enemy.shakeX += .125 * (enemy.shakeXDirection ? -1 : 1)
+      // TODO: сделать так, чтоб двигался медленее, когда он будет находится ближе к изначальной точке
+      let step = 1
 
-      enemy.x += enemy.shakeX
-      enemy.y += .5
+      // двигаем влево/вправо
+      if (enemy.shakeXDirection) {
+        enemy.x += step
+      } else {
+        enemy.x -= step
+      }
+
+      // двигаем врага вниз
+      enemy.y += 1
     })
     this.drawEnemies()
   }
@@ -114,12 +99,43 @@ export default new function(){
     }
   }
 
+  // добавление врагов
+  this.add = () => {
+    const perOnRow = 5
+    const offset = 50
+
+    // TODO: ровно по центру что-то пока не получается, потом попробовать поправить
+    let xEnd = canvas.width - (perOnRow * (this.conf.width + offset))
+    if (xEnd - this.conf.width / 2 < 0) {
+      return console.error("xEnd is not correct:", xEnd);
+    }
+
+    let x = xEnd / 2 + offset / 2
+    for(let i = 0; i < perOnRow; i++){
+      this.enemies.push({
+        x,
+        y: 0 - this.conf.height,
+        leftBits: this.enemyHitCounts,
+      })
+      x += this.conf.width + offset
+    }
+  }
+
+  this.add()
+
   this.enemyHit = enemyIDX => {
     // снижаем хп у противника
     if (--this.enemies[enemyIDX].leftBits <= 0) {
       // убиваем противника, если у него закончилось хп
       this.enemies.splice(enemyIDX, 1)
-      Shooting.bulletCount++
+      if (!this.enemies.length) {
+        this.enemyHitCounts += 10
+        this.add()
+      }
+
+      if (Shooting.bulletCount < 5) {
+        Shooting.bulletCount++
+      }
     }
   }
 

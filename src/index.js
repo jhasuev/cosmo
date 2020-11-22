@@ -40,5 +40,7 @@ Movement.onmove = () => {
   Shooting.setPositions(x, y)
 }
 
+// TODO: сделать контроллер для всего проекта и убрать лишний код из компонентов-классов
+
 
 document.body.style.backgroundImage = "url(assets/img/bg.jpg)"
