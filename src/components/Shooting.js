@@ -2,8 +2,9 @@ import {
   canvas_shooting as canvas,
   ctx_shooting as ctx
 } from "./canvas.js"
+
 import Enemy from './Enemy.js'
-import loadImage from '../helpers/index'
+import { loadImage } from '../helpers/index'
 
 export default new function(){
   this.position = { x: null, y: null }

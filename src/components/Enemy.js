@@ -3,7 +3,7 @@ import {
   ctx_enemy as ctx
 } from "./canvas.js"
 import Shooting from './Shooting.js'
-import loadImage from '../helpers/index'
+import { loadImage } from '../helpers/index'
 
 export default new function(){
   this.conf = {

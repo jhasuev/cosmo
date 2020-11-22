@@ -2,7 +2,7 @@ import {
     canvas_bg as canvas,
     ctx_bg as ctx
 } from "./canvas.js"
-import loadImage from '../helpers/index'
+import { loadImage } from '../helpers/index'
 
 export default new function(){
     this.bgImageElement = null

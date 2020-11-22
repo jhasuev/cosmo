@@ -2,7 +2,8 @@ import {
   canvas_user as canvas,
   ctx_user as ctx
 } from "./canvas.js"
-import loadImage from '../helpers/index'
+
+import { loadImage } from '../helpers/index'
 
 export default new function(){
   this.width = 444 / 4

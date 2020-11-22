@@ -1,4 +1,4 @@
-export default function loadImage(src, fb) {
+export function loadImage(src, fb) {
     let img = new Image()
     img.src = src
     img.onload = img.onerror = (event) => {
