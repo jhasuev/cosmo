@@ -40,7 +40,9 @@ Movement.onmove = () => {
   Shooting.setPositions(x, y)
 }
 
+// TODO: придумать хороший MVC
 // TODO: сделать контроллер для всего проекта и убрать лишний код из компонентов-классов
+// TODO: чтоб у каждой сущности был свой объект: персонаж, противник, пуля...
 
 
 document.body.style.backgroundImage = "url(assets/img/bg.jpg)"
