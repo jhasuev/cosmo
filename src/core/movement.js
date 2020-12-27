@@ -1,11 +1,8 @@
-import {
-  canvas_user as canvas,
-} from "./canvas.js"
-
-export default new function(){
+export default function(canvas){
   this.x = 0
   this.y = 0
   this.styles = {}
+  this.onmovefb = []
 
   this.setPositions = (event) => {
     let canvasWidth = this.styles.width
@@ -29,12 +26,18 @@ export default new function(){
     this.x = canvas.width / 100 * percentCursorX
     this.y = canvas.height / 100 * percentCursorY
 
-    // fallback function
-    if (this.onmove) this.onmove()
+    // fallback functions
+    this.onmovefb.forEach(f => {
+      f({ x: this.x, y: this.y })
+    })
   }
 
   canvas.addEventListener("mousemove", this.setPositions)
   canvas.addEventListener("touchmove", this.setPositions)
+
+  this.onmove = fb => {
+    this.onmovefb.push(fb)
+  }
 
   this.setStyles = styles => {
     this.styles.width = parseFloat(styles.width)
@@ -44,10 +47,10 @@ export default new function(){
   window.addEventListener("resize", () => {
     this.setStyles(getComputedStyle(canvas))
   })
-  
+
   window.addEventListener("load", () => {
     this.setStyles(getComputedStyle(canvas))
   })
 
-  return this
+  return this;
 }
