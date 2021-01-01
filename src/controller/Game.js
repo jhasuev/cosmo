@@ -3,12 +3,14 @@ import BgModel from '../model/Bg.js'
 import UserModel from '../model/User.js'
 import EnemyModel from '../model/Enemy.js'
 import ShootingModel from '../model/Shooting.js'
+import InfoModel from '../model/Info.js'
 
 // Views
 import BgView from '../view/Bg.js'
 import UserView from '../view/User.js'
 import EnemyView from '../view/Enemy.js'
 import ShootingView from '../view/Shooting.js'
+import InfoView from '../view/Info.js'
 
 // User moving system
 import Movement from '../core/movement.js'
@@ -17,10 +19,12 @@ export default new function (){
     this.UserModel = new UserModel()
     this.BgModel = new BgModel()
     this.ShootingModel = ShootingModel
+    this.InfoModel = new InfoModel()
 
     this.UserView = new UserView()
     this.BgView = new BgView()
     this.EnemyView = new EnemyView()
+    this.InfoView = InfoView
     this.ShootingView = ShootingView
 
     // Настройки для потронов
@@ -39,6 +43,18 @@ export default new function (){
         this.UserInit()
         this.ShootingInit()
         this.EnemyInit()
+        this.ShowInfo()
+    }
+
+    this.ShowInfo = () => {
+        this.InfoView.showInfo(this.InfoModel)
+    }
+
+    this.UpdateInfo = (info) => {
+        if (typeof info.score == 'number') this.InfoModel.setScore(info.score)
+        if (typeof info.xp == 'number') this.InfoModel.setXP(info.xp)
+
+        this.ShowInfo()
     }
 
     /**
@@ -271,7 +287,9 @@ export default new function (){
         })
 
         if (this.isUserCollidingWithEnemy()) {
-            alert("DEAD")
+            this.UpdateInfo({
+                xp: this.InfoModel.xp - 1
+            })
         }
 
         this.ShootingRemove(disappearedBullets)
@@ -375,7 +393,9 @@ export default new function (){
 
     this.EnemyHit = enemyIDX => {
         // снижаем хп у противника
-        if (--this.enemies[enemyIDX].xp <= 0) {
+        --this.enemies[enemyIDX].xp
+
+        if (this.enemies[enemyIDX].xp <= 0) {
 
             // убиваем противника, если у него закончилось хп
             this.enemies.splice(enemyIDX, 1)
@@ -390,6 +410,9 @@ export default new function (){
             if (this.bulletCount < 5) {
                 this.bulletCount++
             }
+
+            // добавляем очко игроку (не то что вы подумали)
+            this.UpdateInfo({ score: this.InfoModel.score + 1 })
         }
     }
 }
