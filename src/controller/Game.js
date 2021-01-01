@@ -16,12 +16,12 @@ import Movement from '../core/movement.js'
 export default new function (){
     this.UserModel = new UserModel()
     this.BgModel = new BgModel()
-    // this.ShootingModel = new ShootingModel()
+    this.ShootingModel = ShootingModel
 
     this.UserView = new UserView()
     this.BgView = new BgView()
     this.EnemyView = new EnemyView()
-    // this.ShootingView = new ShootingView()
+    this.ShootingView = ShootingView
 
     // Настройки для потронов
     this.bullets = [] // все потроны / конструкторы
@@ -167,9 +167,9 @@ export default new function (){
      * .ShootingDraw() | служит для вырисовки потрона
      * */
     this.ShootingDraw = () => {
-        ShootingView.clear()
+        this.ShootingView.clear()
         this.bullets.forEach(bullet => {
-            ShootingView.draw({ ...bullet })
+            this.ShootingView.draw({ ...bullet })
         })
     }
 
@@ -177,7 +177,7 @@ export default new function (){
      * .this.ShootingAdd() | добавляет потрон
      * */
     this.ShootingAdd = () => {
-        let Shooting = new ShootingModel()
+        let Shooting = new this.ShootingModel()
         // размеры пушек, взависимости от их количество
         let sizes = [
             {
