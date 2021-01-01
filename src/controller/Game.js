@@ -23,8 +23,6 @@ export default new function (){
     this.EnemyView = new EnemyView()
     // this.ShootingView = new ShootingView()
 
-    this.UserMovement = null
-
     // Настройки для потронов
     this.bullets = [] // все потроны / конструкторы
     this.bulletCount = 1 // кол-во потронов за раз
@@ -97,6 +95,35 @@ export default new function (){
      */
     this.UserDraw = () => {
         this.UserView.draw({ ...this.UserModel })
+    }
+
+    this.isUserCollidingWithEnemy = () => {
+        let isCollided = false
+
+        let userTop = this.UserModel.position.y
+        let userBottom = userTop + this.UserModel.height
+        let userLeft = this.UserModel.position.x
+        let userRight = userLeft + this.UserModel.width
+
+        for(let enemyIDX in this.enemies) {
+            let enemy = this.enemies[enemyIDX]
+
+            let enemyTop = enemy.y
+            let enemyBottom = enemyTop + enemy.height
+            let enemyLeft = enemy.x
+            let enemyRight = enemyLeft + enemy.width
+            if (
+                enemyTop < userBottom
+                && enemyBottom > userTop
+                && enemyLeft < userRight
+                && enemyRight > userLeft
+            ) {
+                isCollided = true
+                break;
+            }
+        }
+
+        return isCollided
     }
 
     this.ShootingInit = () => {
@@ -242,6 +269,10 @@ export default new function (){
                 }
             }
         })
+
+        if (this.isUserCollidingWithEnemy()) {
+            alert("DEAD")
+        }
 
         this.ShootingRemove(disappearedBullets)
     }
