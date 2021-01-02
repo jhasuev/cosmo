@@ -391,10 +391,27 @@ export default new function (){
 
         let x = xEnd / 2 + offset / 2
         for(let i = 0; i < perOnRow; i++){
+            let type = '' // normal / stronger / boss
+            let xp = this.enemyHitCounts
+            if (Math.random() < .8) {
+                type = 'normal'
+                xp *= 1
+            } else {
+                if (Math.random() < .8) {
+                    type = 'stronger'
+                    xp *= 2
+                }
+                else {
+                    type = 'boss'
+                    xp *= 5
+                }
+            }
+
             let model = new EnemyModel()
                 model.x = x
                 model.y = 0 - model.height
-                model.xp = this.enemyHitCounts
+                model.xp = xp
+                model.type = type
 
             model.load()
             this.enemies.push(model)
@@ -405,6 +422,10 @@ export default new function (){
 
 
     this.EnemyMove = () => {
+
+        // console.clear()
+        console.log(this.enemies)
+
         this.enemies.forEach(enemy => {
 
             if(!('originX' in enemy)) {

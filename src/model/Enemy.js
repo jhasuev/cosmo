@@ -6,14 +6,19 @@ export default function(){
   this.x = null;
   this.y = null;
   this.shakeDistance = 20;
-  // this.xp = 10;
+  this.type = 'normal';
 
   this.image = null
 
   this.load = fb => {
     if (this.image) return;
 
-    loadImage("assets/img/enemy-starship.png",(img) => {
+    let image_src = ""
+    if (this.type == 'normal') image_src = "assets/img/enemy-starship-normal.png"
+    if (this.type == 'stronger') image_src = "assets/img/enemy-starship-stronger.png"
+    if (this.type == 'boss') image_src = "assets/img/enemy-starship-boss.png"
+
+    loadImage(image_src,(img) => {
       this.image = img
       if (fb) fb()
     })
