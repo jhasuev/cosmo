@@ -27,16 +27,67 @@ export default new function (){
     this.InfoView = InfoView
     this.ShootingView = ShootingView
 
-    // Настройки для потронов
-    this.bullets = [] // все потроны / конструкторы
-    this.bulletCount = 1 // кол-во потронов за раз
-    this.enemyHitCounts = 10
-    this.bulletStep = 22 // шаг поли
-    this.bulletOffset = 1 // расстояние между потронами
-    this.bulletStartPos = { x: 150, y: 350 } // позиция, где будут появляться потроны (меняется при перемешение персонажа)
 
     // Настройки противников
     this.enemies = []
+    this.enemyHitCounts = 10
+
+    // Настройки для потронов
+    this.bullets = [] // все потроны / конструкторы
+    this.bulletOffset = 1 // расстояние между потронами
+    this.bulletStartPos = { x: 150, y: 350 } // позиция, где будут появляться потроны (меняется при перемешение персонажа)
+
+    this.shootingTypes = {
+        "basic": {
+            "count": 1,
+            "step": 20,
+            "create_interval": 600,
+            "move_interval": 20,
+        },
+        "master": {
+            "count": 3,
+            "step": 20,
+            "create_interval": 500,
+            "move_interval": 15,
+        },
+        "pro": {
+            "count": 5,
+            "step": 20,
+            "create_interval": 350,
+            "move_interval": 13,
+        },
+        "expert": {
+            "count": 3,
+            "step": 30,
+            "create_interval": 200,
+            "move_interval": 5,
+        },
+    }
+    this.shootingTypesLevels = [ "basic", "master", "pro", "expert" ]
+    this.shootingSelectedType = "basic"
+
+    this.bullingUp = () => {
+        let currentIndex = this.shootingTypesLevels.indexOf(this.shootingSelectedType)
+        let maxIndex = this.shootingTypesLevels.length - 1
+        let nextIndex = currentIndex + 1
+        if (nextIndex > maxIndex) {
+            nextIndex = maxIndex
+        }
+        this.shootingSelectedType = this.shootingTypesLevels[nextIndex]
+    }
+    this.bullingDown = () => {
+        let currentIndex = this.shootingTypesLevels.indexOf(this.shootingSelectedType)
+        let nextIndex = currentIndex - 1
+        if (nextIndex < 0) {
+            nextIndex = 0
+        }
+        this.shootingSelectedType = this.shootingTypesLevels[nextIndex]
+    }
+
+    this.getBulletCount = () => this.shootingTypes[this.shootingSelectedType].count
+    this.getBulletStep = () => this.shootingTypes[this.shootingSelectedType].step
+    this.getBulletCreateInterval = () => this.shootingTypes[this.shootingSelectedType].create_interval
+    this.getBulletMoveInterval = () => this.shootingTypes[this.shootingSelectedType].move_interval
 
     this.init = () => {
         this.BgInit()
@@ -168,7 +219,7 @@ export default new function (){
 
             this.ShootingAdd()
             this.ShootingDraw()
-        }, 500)
+        }, this.getBulletCreateInterval())
 
         // движение потронов
         this.ShootingMovingInterval = setInterval(() => {
@@ -176,7 +227,8 @@ export default new function (){
 
             this.ShootingMove()
             this.ShootingDraw()
-        }, 10)
+
+        }, this.getBulletMoveInterval())
     }
 
     /**
@@ -194,6 +246,7 @@ export default new function (){
      * */
     this.ShootingAdd = () => {
         let Shooting = new this.ShootingModel()
+        let bulletCount = this.getBulletCount()
         // размеры пушек, взависимости от их количество
         let sizes = [
             {
@@ -213,11 +266,11 @@ export default new function (){
                 height: Shooting.height / 1.75
             },
         ]
-        let size = sizes[this.bulletCount - 1] || sizes[sizes.length - 1]
+        let size = sizes[bulletCount - 1] || sizes[sizes.length - 1]
 
-        let xStart = this.bulletStartPos.x - (size.width * this.bulletOffset) * this.bulletCount + size.width * this.bulletOffset
+        let xStart = this.bulletStartPos.x - (size.width * this.bulletOffset) * bulletCount + size.width * this.bulletOffset
 
-        for (let i = 0; i < this.bulletCount; i++){
+        for (let i = 0; i < bulletCount; i++){
             xStart += (size.width * this.bulletOffset) * 2 * (!!i * 1)
 
             let NewShootingModel = new ShootingModel({
@@ -225,7 +278,7 @@ export default new function (){
                 height: size.height,
                 xStart: xStart - this.bulletStartPos.x,
                 x: this.bulletStartPos.x - size.width / 2,
-                y: this.bulletStartPos.y - this.bulletCount * 5,
+                y: this.bulletStartPos.y - bulletCount * 5,
             })
 
             NewShootingModel.load(() => {
@@ -245,7 +298,7 @@ export default new function (){
     this.ShootingMove = () => {
         let disappearedBullets = []
         this.bullets.forEach((bullet, bulletID) => {
-            bullet.y -= this.bulletStep
+            bullet.y -= this.getBulletStep()
 
             let xTo = bullet.xStart / 5
             if (xTo) {
@@ -407,9 +460,9 @@ export default new function (){
             }
 
             // добавляем потроны
-            if (this.bulletCount < 5) {
-                this.bulletCount++
-            }
+            // if (this.bulletCount < 5) {
+            //     this.bulletCount++
+            // }
 
             // добавляем очко игроку (не то что вы подумали)
             this.UpdateInfo({ score: this.InfoModel.score + 1 })
