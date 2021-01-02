@@ -39,31 +39,42 @@ export default new function (){
 
     this.shootingTypes = {
         "basic": {
+            "xp_coef": 1,
             "count": 1,
             "step": 20,
-            "create_interval": 600,
-            "move_interval": 20,
+            "create_timer": 600,
+            "move_timer": 20,
         },
         "master": {
+            "xp_coef": 1,
             "count": 3,
             "step": 20,
-            "create_interval": 500,
-            "move_interval": 15,
+            "create_timer": 500,
+            "move_timer": 15,
         },
         "pro": {
+            "xp_coef": 1,
             "count": 5,
             "step": 20,
-            "create_interval": 350,
-            "move_interval": 13,
+            "create_timer": 350,
+            "move_timer": 13,
         },
         "expert": {
+            "xp_coef": 2,
             "count": 3,
             "step": 30,
-            "create_interval": 200,
-            "move_interval": 5,
+            "create_timer": 200,
+            "move_timer": 5,
+        },
+        "nohcho": {
+            "xp_coef": 3,
+            "count": 5,
+            "step": 30,
+            "create_timer": 180,
+            "move_timer": 4,
         },
     }
-    this.shootingTypesLevels = [ "basic", "master", "pro", "expert" ]
+    this.shootingTypesLevels = [ "basic", "master", "pro", "expert", "nohcho" ]
     this.shootingSelectedType = "basic"
 
     this.bullingUp = () => {
@@ -75,19 +86,21 @@ export default new function (){
         }
         this.shootingSelectedType = this.shootingTypesLevels[nextIndex]
     }
-    this.bullingDown = () => {
+    this.bullingDown = (index) => {
         let currentIndex = this.shootingTypesLevels.indexOf(this.shootingSelectedType)
         let nextIndex = currentIndex - 1
         if (nextIndex < 0) {
             nextIndex = 0
         }
+        if (typeof index == 'number') nextIndex = index
         this.shootingSelectedType = this.shootingTypesLevels[nextIndex]
     }
 
     this.getBulletCount = () => this.shootingTypes[this.shootingSelectedType].count
     this.getBulletStep = () => this.shootingTypes[this.shootingSelectedType].step
-    this.getBulletCreateInterval = () => this.shootingTypes[this.shootingSelectedType].create_interval
-    this.getBulletMoveInterval = () => this.shootingTypes[this.shootingSelectedType].move_interval
+    this.getBulletCreateTimer = () => this.shootingTypes[this.shootingSelectedType].create_timer
+    this.getBulletMoveTimer = () => this.shootingTypes[this.shootingSelectedType].move_timer
+    this.getBulletXPCoef = () => this.shootingTypes[this.shootingSelectedType].xp_coef
 
     this.init = () => {
         this.BgInit()
@@ -119,9 +132,7 @@ export default new function (){
             this.BgDraw()
         })
 
-
         clearInterval(this.BgTimer)
-        this.BgTimer = null
 
         this.BgTimer = setInterval(() => {
             if (!this.BgTimer) return;
@@ -214,21 +225,10 @@ export default new function (){
         })
 
         // добавление потронов
-        this.ShootingAddingInterval = setInterval(() => {
-            if (!this.ShootingAddingInterval) return;
-
-            this.ShootingAdd()
-            this.ShootingDraw()
-        }, this.getBulletCreateInterval())
+        this.ShootingAdd()
 
         // движение потронов
-        this.ShootingMovingInterval = setInterval(() => {
-            if (!this.ShootingMovingInterval) return;
-
-            this.ShootingMove()
-            this.ShootingDraw()
-
-        }, this.getBulletMoveInterval())
+        this.ShootingMove()
     }
 
     /**
@@ -288,7 +288,11 @@ export default new function (){
             this.bullets.push(NewShootingModel)
         }
 
-        // console.log(this.bullets)
+        // рисуем все
+        this.ShootingDraw()
+
+        // вызываем снова себя
+        this.ShootingAddTimer = setTimeout(this.ShootingAdd, this.getBulletCreateTimer())
     }
 
     /**
@@ -298,6 +302,7 @@ export default new function (){
     this.ShootingMove = () => {
         let disappearedBullets = []
         this.bullets.forEach((bullet, bulletID) => {
+
             bullet.y -= this.getBulletStep()
 
             let xTo = bullet.xStart / 5
@@ -328,6 +333,8 @@ export default new function (){
                     default:
                         // бъем по поражению / противнику
                         // enemy.enemyHit(enemyIDX)
+
+                        if (enemy.y < 0 - enemy.height / 2 + 20) return;
                         this.EnemyHit(enemyIDX)
 
                         // убираем пулю / снаряд
@@ -346,6 +353,12 @@ export default new function (){
         }
 
         this.ShootingRemove(disappearedBullets)
+
+        // рисуем пульки
+        this.ShootingDraw()
+
+        // вызываем саму себя
+        setTimeout(this.ShootingMove, this.getBulletMoveTimer())
     }
 
     /**
@@ -423,9 +436,6 @@ export default new function (){
 
     this.EnemyMove = () => {
 
-        // console.clear()
-        console.log(this.enemies)
-
         this.enemies.forEach(enemy => {
 
             if(!('originX' in enemy)) {
@@ -467,23 +477,27 @@ export default new function (){
 
     this.EnemyHit = enemyIDX => {
         // снижаем хп у противника
-        --this.enemies[enemyIDX].xp
+        this.enemies[enemyIDX].xp -= 1 * this.getBulletXPCoef()
 
         if (this.enemies[enemyIDX].xp <= 0) {
 
             // убиваем противника, если у него закончилось хп
             this.enemies.splice(enemyIDX, 1)
 
+            // усовершенствоваем стрельбу
+            this.bullingUp()
+            clearTimeout(this.bullingUpTimer)
+            this.bullingUpTimer = setTimeout(() => {
+                this.bullingDown()
+            }, 10 * 1000)
+
             // если врагов больше нет
             if (!this.enemies.length) {
                 this.enemyHitCounts += 10
                 this.EnemyAdd()
-            }
 
-            // добавляем потроны
-            // if (this.bulletCount < 5) {
-            //     this.bulletCount++
-            // }
+                this.bullingDown(1)
+            }
 
             // добавляем очко игроку (не то что вы подумали)
             this.UpdateInfo({ score: this.InfoModel.score + 1 })
