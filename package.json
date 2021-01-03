@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "webpack-dev-server --mode development --open",
-    "build": "webpack --mode prodaction"
+    "build": "webpack --mode production"
   },
   "author": "Jamal Hasuev",
   "license": "ISC",
