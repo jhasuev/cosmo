@@ -34,7 +34,7 @@ export default new function (){
 
     // Настройки для потронов
     this.bullets = [] // все потроны / конструкторы
-    this.bulletOffset = 1 // расстояние между потронами
+    this.bulletOffset = .75 // расстояние между потронами
     this.bulletStartPos = { x: 150, y: 350 } // позиция, где будут появляться потроны (меняется при перемешение персонажа)
 
     this.shootingTypes = {
@@ -169,7 +169,7 @@ export default new function (){
 
             // перемешение игрока при ховере
             UserMovement.onmove(position => {
-                this.UserModel.setPositions(position.x, position.y, this.UserView.canvas)
+                this.UserModel.setPositions(position.x, Math.max(position.y, this.UserView.canvas.height / 4), this.UserView.canvas)
                 this.UserDraw()
             })
         })
@@ -241,8 +241,10 @@ export default new function (){
                 x = this.UserView.canvas.width - this.UserModel.width / 2
             }
 
+            let _y = Math.max(y, this.UserView.canvas.height / 4)
+            _y = _y - this.UserModel.height / 2
             this.bulletStartPos.x = x
-            this.bulletStartPos.y = y
+            this.bulletStartPos.y = _y
         })
 
         // добавление потронов
@@ -275,16 +277,16 @@ export default new function (){
                 height: Shooting.height
             },
             {
-                width: Shooting.width  / 1.25,
-                height: Shooting.height  / 1.25
+                width: Shooting.width  / 1.125,
+                height: Shooting.height  / 1.125
             },
             {
-                width: Shooting.width / 1.5,
-                height: Shooting.height / 1.5
+                width: Shooting.width / 1.25,
+                height: Shooting.height / 1.25
             },
             {
-                width: Shooting.width / 1.75,
-                height: Shooting.height / 1.75
+                width: Shooting.width / 1.275,
+                height: Shooting.height / 1.275
             },
         ]
         let size = sizes[bulletCount - 1] || sizes[sizes.length - 1]
@@ -425,11 +427,11 @@ export default new function (){
         for(let i = 0; i < perOnRow; i++){
             let type = '' // normal / stronger / boss
             let xp = this.enemyHitCounts
-            if (Math.random() < .8) {
+            if (Math.random() < .9) {
                 type = 'normal'
                 xp *= 1
             } else {
-                if (Math.random() < .8) {
+                if (Math.random() < .9) {
                     type = 'stronger'
                     xp *= 2
                 }

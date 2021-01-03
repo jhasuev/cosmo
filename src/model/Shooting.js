@@ -2,8 +2,8 @@ import { loadImage } from '../helpers/index'
 
 export default function(args){
   this.image = null
-  this.width = 88 / 5
-  this.height = 272 / 5
+  this.width = 138 / 7
+  this.height = 289 / 7
   this.x = null
   this.y = null
   this.xStart = null
@@ -19,7 +19,7 @@ export default function(args){
   this.load = fb => {
     if (this.image) return;
 
-    loadImage("assets/img/bullet1.png",(img) => {
+    loadImage("assets/img/bullet2.png",(img) => {
       this.image = img
       if (fb) fb()
     })
