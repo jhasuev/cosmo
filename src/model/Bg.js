@@ -1,5 +1,3 @@
-import { loadImage } from '../helpers/index'
-
 export default function(){
     this.image = null;
     this.positions = [
@@ -8,11 +6,9 @@ export default function(){
     ]
 
     this.load = fb => {
-        loadImage("assets/img/bg.jpg",(img, type) => {
-            this.image = img
+        this.image = document.getElementById("bg-img")
 
-            if (fb) fb()
-        })
+        if (fb) fb()
     }
 
     this.move = (canvas) => {

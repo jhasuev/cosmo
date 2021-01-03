@@ -1,27 +1,31 @@
-import { loadImage } from '../helpers/index'
+import { getRatioHeight } from '../helpers/index'
 
 export default function(){
-  this.width = 548 / 7;
-  this.height = 754 / 7;
+  this.width = null;
+  this.height = null;
   this.x = null;
   this.y = null;
   this.shakeDistance = 20;
   this.type = 'normal';
 
   this.image = null
+  this.images = {
+    "normal" : document.getElementById('enemy-normal-img'),
+    "stronger" : document.getElementById('enemy-stronger-img'),
+    "boss" : document.getElementById('enemy-boss-img'),
+  }
 
   this.load = fb => {
     if (this.image) return;
 
-    let image_src = ""
-    if (this.type == 'normal') image_src = "assets/img/enemy-starship-normal.png"
-    if (this.type == 'stronger') image_src = "assets/img/enemy-starship-stronger.png"
-    if (this.type == 'boss') image_src = "assets/img/enemy-starship-boss.png"
+    this.image = this.images[this.type]
+    let width = 70
+    let height = getRatioHeight(width, this.image.width, this.image.height)
 
-    loadImage(image_src,(img) => {
-      this.image = img
-      if (fb) fb()
-    })
+    this.width = width
+    this.height = height
+
+    if (fb) fb()
   }
 
   return this;

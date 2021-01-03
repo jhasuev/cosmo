@@ -186,6 +186,7 @@ export default new function (){
         let xp = this.InfoModel.xp - 1
 
         if (xp <= 0) {
+            this.enemyHitCounts = 10
             this.bullingDown(0)
             this.UpdateInfo({ xp: 5, score: 0 })
         } else {
@@ -269,6 +270,8 @@ export default new function (){
      * */
     this.ShootingAdd = () => {
         let Shooting = new this.ShootingModel()
+            Shooting.load()
+
         let bulletCount = this.getBulletCount()
         // размеры пушек, взависимости от их количество
         let sizes = [
@@ -285,8 +288,12 @@ export default new function (){
                 height: Shooting.height / 1.25
             },
             {
-                width: Shooting.width / 1.275,
-                height: Shooting.height / 1.275
+                width: Shooting.width / 1.475,
+                height: Shooting.height / 1.475
+            },
+            {
+                width: Shooting.width / 1.5,
+                height: Shooting.height / 1.5
             },
         ]
         let size = sizes[bulletCount - 1] || sizes[sizes.length - 1]
@@ -315,7 +322,7 @@ export default new function (){
         this.ShootingDraw()
 
         // вызываем снова себя
-        this.ShootingAddTimer = setTimeout(this.ShootingAdd, this.getBulletCreateTimer())
+        setTimeout(this.ShootingAdd, this.getBulletCreateTimer())
     }
 
     /**
@@ -416,6 +423,7 @@ export default new function (){
         const offset = 50
 
         let exampleModel = new EnemyModel()
+        exampleModel.load()
 
         // TODO: ровно по центру что-то пока не получается, потом попробовать поправить
         let xEnd = this.EnemyView.canvas.width - (perOnRow * (exampleModel.width + offset))
@@ -442,12 +450,13 @@ export default new function (){
             }
 
             let model = new EnemyModel()
-                model.x = x
-                model.y = 0 - model.height
                 model.xp = xp
                 model.type = type
+                model.load()
 
-            model.load()
+                model.x = x
+                model.y = 0 - model.height
+
             this.enemies.push(model)
 
             x += model.width + offset
@@ -490,9 +499,10 @@ export default new function (){
             enemy.y += 1
 
             // можно добавить еще противников
-            if (enemy.y < enemy.height / 2) {
+            if (enemy.y < enemy.height) {
                 canAddMore = false
             }
+
             // враги пришли на базу...
             if (enemy.y + enemy.height > this.UserView.canvas.height) {
                 isUserDead = true

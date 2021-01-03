@@ -1,9 +1,9 @@
-import { loadImage } from '../helpers/index'
+import { getRatioHeight } from '../helpers/index'
 
 export default function(args){
   this.image = null
-  this.width = 138 / 7
-  this.height = 289 / 7
+  this.width = null
+  this.height = null
   this.x = null
   this.y = null
   this.xStart = null
@@ -19,10 +19,17 @@ export default function(args){
   this.load = fb => {
     if (this.image) return;
 
-    loadImage("assets/img/bullet2.png",(img) => {
-      this.image = img
-      if (fb) fb()
-    })
+    this.image = document.getElementById("bullet-img")
+
+    if (!this.width || !this.height) {
+      let width = 20
+      let height = getRatioHeight(width, this.image.width, this.image.height)
+
+      this.width = width
+      this.height = height
+    }
+
+    if (fb) fb()
   }
 
   this.isOutOfEdges = () => {

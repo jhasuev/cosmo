@@ -14,6 +14,14 @@
     <canvas id="info"></canvas>
     <canvas id="user"></canvas>
   </div>
-  <script src="./dist/main.js?v=4"></script>
+
+  <div class="preloader" id="js-preloader"></div>
+  <div class="game-images  js-game-images"></div>
+
+  <script>
+    window.COSMO_VERSION = 6;
+    document.write('<script src="./dist/main.js?v=' + COSMO_VERSION + '"><\/script>');
+  </script>
+
 </body>
 </html>

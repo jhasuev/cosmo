@@ -1,4 +1,4 @@
-import { loadImage } from '../helpers/index'
+import { getRatioHeight } from '../helpers/index'
 
 export default function(){
   this.image = null
@@ -7,10 +7,16 @@ export default function(){
   this.position = { x :  150, y : 150 }
 
   this.load = fb => {
-    loadImage("assets/img/user-starship.png",(img) => {
-      this.image = img
-      if (fb) fb()
-    })
+    if (this.image) return;
+
+    this.image = document.getElementById("user-img")
+    let width = 100
+    let height = getRatioHeight(width, this.image.width, this.image.height)
+
+    this.width = width
+    this.height = height
+
+    if (fb) fb()
   }
 
   this.setPositions = (x, y, canvas) => {
