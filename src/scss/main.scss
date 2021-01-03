@@ -5,13 +5,17 @@
 }
 
 body {
-  height: 100vh;
-
-  position: relative;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 
   overflow: hidden;
 
-  background: center center no-repeat;
+  display: flex;
+
+  background: center center repeat-y;
   background-size: cover;
   
   &:after {
@@ -25,6 +29,12 @@ body {
     background-color: #000;
     opacity: .2;
   }
+}
+
+.wrapper {
+  position: relative;
+  height: 100%;
+  width: 100%;
 }
 
 canvas {
@@ -44,5 +54,5 @@ canvas {
     z-index: 1;
   }
 
-  box-shadow: 0 0 25px rgba(0,0,0,.25);
+  box-shadow: 0 0 15px rgba(255,255,255,.125);
 }
