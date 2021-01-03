@@ -66,15 +66,22 @@ export default new function (){
             "create_timer": 200,
             "move_timer": 5,
         },
+        "guru": {
+            "xp_coef": 5,
+            "count": 5,
+            "step": 30,
+            "create_timer": 180,
+            "move_timer": 4,
+        },
         "nohcho": {
-            "xp_coef": 3,
+            "xp_coef": 10,
             "count": 5,
             "step": 30,
             "create_timer": 180,
             "move_timer": 4,
         },
     }
-    this.shootingTypesLevels = [ "basic", "master", "pro", "expert", "nohcho" ]
+    this.shootingTypesLevels = [ "basic", "master", "pro", "expert", "guru", "nohcho" ]
     this.shootingSelectedType = "basic"
 
     this.bullingUp = () => {
@@ -173,6 +180,20 @@ export default new function (){
      */
     this.UserDraw = () => {
         this.UserView.draw({ ...this.UserModel })
+    }
+
+    this.UserDie = () => {
+        let xp = this.InfoModel.xp - 1
+
+        if (xp <= 0) {
+            this.bullingDown(0)
+            this.UpdateInfo({ xp: 5, score: 0 })
+        } else {
+            this.UpdateInfo({ xp })
+        }
+
+        // убираем врагов
+        this.enemies = []
     }
 
     this.isUserCollidingWithEnemy = () => {
@@ -347,9 +368,7 @@ export default new function (){
         })
 
         if (this.isUserCollidingWithEnemy()) {
-            this.UpdateInfo({
-                xp: this.InfoModel.xp - 1
-            })
+            this.UserDie()
         }
 
         this.ShootingRemove(disappearedBullets)
@@ -435,6 +454,8 @@ export default new function (){
 
 
     this.EnemyMove = () => {
+        let canAddMore = true
+        let isUserDead = false
 
         this.enemies.forEach(enemy => {
 
@@ -465,7 +486,19 @@ export default new function (){
 
             // двигаем врага вниз
             enemy.y += 1
+
+            // можно добавить еще противников
+            if (enemy.y < enemy.height / 2) {
+                canAddMore = false
+            }
+            // враги пришли на базу...
+            if (enemy.y + enemy.height > this.UserView.canvas.height) {
+                isUserDead = true
+            }
         })
+
+        if (canAddMore) this.EnemyAdd()
+        if (isUserDead) this.UserDie()
     }
 
     this.EnemyDraw = () => {

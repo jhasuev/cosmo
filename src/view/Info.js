@@ -8,7 +8,8 @@ export default new function(){
     let fz = 20
     let offsets = 10
     let box_width = 150
-    let box_height = (fz * 2) + offsets * 2
+    let line = 3
+    let box_height = (fz * line) + offsets * line
 
     // фон
     this.ctx.beginPath()
@@ -20,8 +21,9 @@ export default new function(){
     // текста
     this.ctx.fillStyle = '#000'
     this.ctx.font = `bold ${fz}px "Trebuchet MS"`
-    this.ctx.fillText(`XP: ${info.xp}`, 0 + offsets, box_height / 2, box_width - offsets * 2)
-    this.ctx.fillText(`Score: ${info.score}`, 0 + offsets, box_height / 2 + fz, box_width - offsets * 2)
+    this.ctx.fillText(`XP: ${info.xp}`, 0 + offsets, offsets + fz, box_width - offsets * 2)
+    this.ctx.fillText(`Score: ${info.score}`, 0 + offsets, offsets + fz * 2, box_width - offsets * 2)
+    this.ctx.fillText(`Record: ${info.record}`, 0 + offsets, offsets + fz * 3, box_width - offsets * 2)
     this.ctx.fill()
   }
 
