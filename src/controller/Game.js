@@ -169,7 +169,7 @@ export default new function (){
 
             // перемешение игрока при ховере
             UserMovement.onmove(position => {
-                this.UserModel.setPositions(position.x, Math.max(position.y, this.UserView.canvas.height / 4), this.UserView.canvas)
+                this.UserModel.setPositions(position.x, Math.max(position.y, this.UserModel.height), this.UserView.canvas)
                 this.UserDraw()
             })
         })
@@ -242,7 +242,7 @@ export default new function (){
                 x = this.UserView.canvas.width - this.UserModel.width / 2
             }
 
-            let _y = Math.max(y, this.UserView.canvas.height / 4)
+            let _y = Math.max(y, this.UserModel.height)
             _y = _y - this.UserModel.height / 2
             this.bulletStartPos.x = x
             this.bulletStartPos.y = _y
