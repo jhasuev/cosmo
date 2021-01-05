@@ -273,6 +273,12 @@ export default new function (){
             Shooting.load()
 
         let bulletCount = this.getBulletCount()
+
+        // немного поднимаем настроение у игрока...
+        if (bulletCount == 1 && Math.random() > .95) {
+            bulletCount = Math.ceil(Math.random() * (10 - 5) + 5)
+        }
+
         // размеры пушек, взависимости от их количество
         let sizes = [
             {
@@ -351,6 +357,8 @@ export default new function (){
             let bulletStartY = bullet.y
             let bulletStopY = bullet.y + bullet.height
 
+            if (bulletStartY < 15) return;
+
             // смотрим, побили ли мы что-нибудь
             for(let enemyIDX in this.enemies) {
                 let enemy = this.enemies[enemyIDX]
@@ -362,9 +370,6 @@ export default new function (){
 
                     default:
                         // бъем по поражению / противнику
-                        // enemy.enemyHit(enemyIDX)
-
-                        if (enemy.y < 0 - enemy.height / 2 + 20) return;
                         this.EnemyHit(enemyIDX)
 
                         // убираем пулю / снаряд
@@ -433,21 +438,10 @@ export default new function (){
 
         let x = xEnd / 2 + offset / 2
         for(let i = 0; i < perOnRow; i++){
-            let type = '' // normal / stronger / boss
-            let xp = this.enemyHitCounts
-            if (Math.random() < .9) {
-                type = 'normal'
-                xp *= 1
-            } else {
-                if (Math.random() < .9) {
-                    type = 'stronger'
-                    xp *= 2
-                }
-                else {
-                    type = 'boss'
-                    xp *= 5
-                }
-            }
+            let random_type = this.getEnemyType()
+
+            let type = random_type.type
+            let xp = this.enemyHitCounts * random_type.xp
 
             let model = new EnemyModel()
                 model.xp = xp
@@ -461,6 +455,23 @@ export default new function (){
 
             x += model.width + offset
         }
+    }
+
+    this.getEnemyType = () => {
+        let type = "normal"
+        let xp = 1
+
+        if (Math.random() > .9) {
+            if (Math.random() > .9) {
+                type = 'boss'
+                xp = 5
+            } else {
+                type = 'stronger'
+                xp = 2
+            }
+        }
+
+        return { type, xp }
     }
 
 
@@ -529,7 +540,7 @@ export default new function (){
             // убиваем противника, если у него закончилось хп
             this.enemies.splice(enemyIDX, 1)
 
-            // усовершенствоваем стрельбу
+            // усовершенствования стрельбы
             this.bullingUp()
             clearTimeout(this.bullingUpTimer)
             this.bullingUpTimer = setTimeout(() => {
@@ -538,7 +549,11 @@ export default new function (){
 
             // если врагов больше нет
             if (!this.enemies.length) {
-                this.enemyHitCounts += 10
+
+                // why not? ))
+                if (Math.random() < .5) {
+                    this.enemyHitCounts += 10
+                }
                 this.EnemyAdd()
 
                 this.bullingDown(1)
