@@ -128,6 +128,12 @@ export default new function (){
         this.ShowInfo()
     }
 
+    this.ResetInfo = () => {
+        this.InfoModel.reset()
+
+        this.ShowInfo()
+    }
+
     /**
      *  .BgInit() | Служит для инициализации фона + его анимированию
      */
@@ -188,7 +194,7 @@ export default new function (){
         if (xp <= 0) {
             this.enemyHitCounts = 10
             this.bullingDown(0)
-            this.UpdateInfo({ xp: 5, score: 0 })
+            this.ResetInfo()
         } else {
             this.UpdateInfo({ xp })
         }
