@@ -30,6 +30,7 @@ export default new function (){
 
     // Настройки противников
     this.enemies = []
+    this.enemyMaxHitCounts = 100
     this.enemyHitCounts = 10
 
     // Настройки для потронов
@@ -41,47 +42,33 @@ export default new function (){
         "basic": {
             "xp_coef": 1,
             "count": 1,
-            "step": 20,
-            "create_timer": 600,
+            "step": 30,
+            "create_timer": 277,
             "move_timer": 20,
         },
         "master": {
             "xp_coef": 1,
             "count": 3,
-            "step": 20,
-            "create_timer": 500,
-            "move_timer": 15,
+            "step": 30,
+            "create_timer": 200,
+            "move_timer": 20,
         },
         "pro": {
             "xp_coef": 1,
             "count": 5,
-            "step": 20,
-            "create_timer": 350,
-            "move_timer": 13,
+            "step": 30,
+            "create_timer": 220,
+            "move_timer": 20,
         },
         "expert": {
             "xp_coef": 2,
-            "count": 3,
-            "step": 30,
-            "create_timer": 200,
-            "move_timer": 5,
-        },
-        "guru": {
-            "xp_coef": 5,
-            "count": 5,
+            "count": 6,
             "step": 30,
             "create_timer": 180,
-            "move_timer": 4,
-        },
-        "nohcho": {
-            "xp_coef": 10,
-            "count": 5,
-            "step": 30,
-            "create_timer": 180,
-            "move_timer": 4,
+            "move_timer": 15,
         },
     }
-    this.shootingTypesLevels = [ "basic", "master", "pro", "expert", "guru", "nohcho" ]
+    this.shootingTypesLevels = [ "basic", "master", "pro", "expert" ]
     this.shootingSelectedType = "basic"
 
     this.bullingUp = () => {
@@ -546,27 +533,29 @@ export default new function (){
             // убиваем противника, если у него закончилось хп
             this.enemies.splice(enemyIDX, 1)
 
+            // добавляем очко игроку (не то что вы подумали)
+            this.UpdateInfo({ score: this.InfoModel.score + 1 })
+
             // усовершенствования стрельбы
-            this.bullingUp()
-            clearTimeout(this.bullingUpTimer)
-            this.bullingUpTimer = setTimeout(() => {
-                this.bullingDown()
-            }, 10 * 1000)
+            if (this.InfoModel.score && this.InfoModel.score % 5 == 0) {
+                this.bullingUp()
+                clearTimeout(this.bullingUpTimer)
+                this.bullingUpTimer = setTimeout(() => {
+                    this.bullingDown()
+                }, this.enemyHitCounts * 1000)
+            }
 
             // если врагов больше нет
             if (!this.enemies.length) {
 
                 // why not? ))
-                if (Math.random() < .5) {
+                if (Math.random() < .5 && this.enemyHitCounts < this.enemyMaxHitCounts) {
                     this.enemyHitCounts += 10
                 }
                 this.EnemyAdd()
 
                 this.bullingDown(1)
             }
-
-            // добавляем очко игроку (не то что вы подумали)
-            this.UpdateInfo({ score: this.InfoModel.score + 1 })
         }
     }
 }
