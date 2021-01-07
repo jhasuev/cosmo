@@ -11,6 +11,11 @@ document.querySelector('.js-game-images').innerHTML = `
   <img src="assets/img/bg.jpg?v=${COSMO_VERSION}" id="bg-img">
   <img src="assets/img/bullet2.png?v=${COSMO_VERSION}" id="bullet-img">
   <img src="assets/img/enemy-starship-boss.png?v=${COSMO_VERSION}" id="enemy-boss-img">
+  
+  <img src="assets/img/enemy-starship-normal-die-sprite.png?v=${COSMO_VERSION}" id="enemy-normal-die-img">
+  <img src="assets/img/enemy-starship-stronger-die-sprite.png?v=${COSMO_VERSION}" id="enemy-stronger-die-img">
+  <img src="assets/img/enemy-starship-boss-die-sprite.png?v=${COSMO_VERSION}" id="enemy-boss-die-img">
+  
   <img src="assets/img/enemy-starship-normal.png?v=${COSMO_VERSION}" id="enemy-normal-img">
   <img src="assets/img/enemy-starship-stronger.png?v=${COSMO_VERSION}" id="enemy-stronger-img">
   <img src="assets/img/user-starship.png?v=${COSMO_VERSION}" id="user-img">

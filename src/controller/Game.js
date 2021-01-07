@@ -473,6 +473,8 @@ export default new function (){
         let isUserDead = false
 
         this.enemies.forEach(enemy => {
+            // если враг в процессе умирания - оставляем его
+            if (enemy.status == 'dying') return;
 
             if(!('originX' in enemy)) {
                 enemy.originX = enemy.x
@@ -524,14 +526,28 @@ export default new function (){
         })
     }
 
+    this.EnemyDeadAway = () => {
+        this.enemies = this.enemies.filter(enemy => enemy.status != 'dead')
+    }
+
     this.EnemyHit = enemyIDX => {
+        let enemy = this.enemies[enemyIDX]
+        // если враг в процессе умирания - оставляем его
+        if (enemy.status == 'dying') return;
+
         // снижаем хп у противника
-        this.enemies[enemyIDX].xp -= 1 * this.getBulletXPCoef()
+        enemy.xp -= 1 * this.getBulletXPCoef()
 
-        if (this.enemies[enemyIDX].xp <= 0) {
-
+        if (enemy.xp <= 0) {
             // убиваем противника, если у него закончилось хп
-            this.enemies.splice(enemyIDX, 1)
+            // меняем статус противника на умирающего...
+            enemy.status = 'dying'
+
+            // проиогрываем анимацию умирания...
+            enemy.kill().then(() => {
+                enemy.status = 'dead'
+                this.EnemyDeadAway()
+            })
 
             // добавляем очко игроку (не то что вы подумали)
             this.UpdateInfo({ score: this.InfoModel.score + 1 })
