@@ -15,19 +15,7 @@ body {
 
   display: flex;
 
-  background-color: #111;
-  
-  &:after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: -1;
-    background-color: #000;
-    opacity: .2;
-  }
+  background-color: #222;
 }
 
 .wrapper {
@@ -51,49 +39,5 @@ canvas {
 
   cursor: none;
 
-  &#user {
-    z-index: 1;
-  }
-
-  box-shadow: 0 0 15px rgba(255,255,255,.05);
-}
-
-.game-images {
-  position: fixed;
-  left: 100%;
-  bottom: 100%;
-}
-
-.preloader {
-  position: fixed;
-  z-index: 222;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #222;
-
-  &:after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    margin: auto;
-
-    width: 35px;
-    height: 35px;
-    border: 3px solid #555;
-    border-left-color: #eee;
-    border-radius: 50%;
-
-    animation: 1s spin infinite linear;
-  }
-
-  @keyframes spin {
-    to {
-      transform: rotate(360deg);
-    }
-  }
+  border: 1px solid #aaa;
 }
