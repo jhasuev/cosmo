@@ -267,11 +267,6 @@ export default new function (){
 
         let bulletCount = this.getBulletCount()
 
-        // немного поднимаем настроение у игрока...
-        if (bulletCount == 1 && Math.random() > .95) {
-            bulletCount = Math.ceil(Math.random() * (10 - 5) + 5)
-        }
-
         // размеры пушек, взависимости от их количество
         let sizes = [
             {
