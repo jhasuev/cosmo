@@ -1,4 +1,5 @@
 import Game from "../index";
+
 export default {
     x: 0,
     y: 0,
@@ -9,7 +10,7 @@ export default {
     },
     styles: {},
 
-    init(){
+    init() {
         [
             "mousedown",
             "mousemove",
@@ -34,8 +35,8 @@ export default {
         this.setPositionsDefault()
     },
 
-    setPositions(event){
-        let { x, y } = this.getPositions(event)
+    setPositions(event) {
+        let {x, y} = this.getPositions(event)
         x = x || this.positions.move.x || this.x
         y = y || this.positions.move.y || this.y
 
@@ -69,7 +70,7 @@ export default {
 
     },
 
-    clearPositions(){
+    clearPositions() {
         this.positions.start.x = null
         this.positions.start.y = null
         this.positions.move.x = null
@@ -78,19 +79,19 @@ export default {
         this.positions.origin.y = null
     },
 
-    setPositionsDefault(){
+    setPositionsDefault() {
         this.x = 720 / 2
         this.y = 1100
 
         this.clearPositions()
     },
 
-    getPositions(event){
+    getPositions(event) {
         let layerX;
         let layerY;
-        let { width, height } = this.styles
+        let {width, height} = this.styles
 
-        if ([ "touchstart", "touchmove" ].includes(event.type)) {
+        if (["touchstart", "touchmove"].includes(event.type)) {
             let touch = event.touches[0]
 
             layerX = touch.clientX - touch.target.offsetLeft
@@ -106,7 +107,7 @@ export default {
         let x = Game.width / 100 * percentCursorX
         let y = Game.height / 100 * percentCursorY
 
-        return { x, y }
+        return {x, y}
     },
 
     setStyles(styles) {
