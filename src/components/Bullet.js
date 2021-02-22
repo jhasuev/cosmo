@@ -1,4 +1,5 @@
 import Game from "../index";
+import { isCollised } from '../helper'
 
 export default {
     x: 0,
@@ -7,6 +8,7 @@ export default {
     height: 58,
     offset: .75,
     list: [],
+    createTimeout: null,
 
     type: "default",
     types: {
@@ -26,6 +28,7 @@ export default {
             count: 3, // bullets count
         },
     },
+    levels: ["default", "secondary", "fast"],
 
     get create_interval() {
         return this.types[this.type].interval
@@ -37,14 +40,31 @@ export default {
         return this.types[this.type].count
     },
 
+    start(){
+        this.stop()
+        this.createTimeout = setTimeout(() => {
+            this.add()
+            this.start()
+        }, this.create_interval)
+    },
+    stop(){
+        this.createTimeout = clearTimeout(this.createTimeout)
+    },
+
+    render(ctx){
+        this.list.forEach(bullet => {
+            ctx.drawImage(Game.assets.bullet, bullet.x, bullet.y, bullet.width, bullet.height)
+        })
+    },
+
     add() {
         let x = this.x - (this.width * this.offset) * this.count + this.width * this.offset
 
         for (let i = 0; i < this.count; i++) {
-            x += (this.width * this.offset) * 2 * (!!i * 1)
+            x += this.width * this.offset * 2 * !!i
             this.list.push({
                 x,
-                y: this.y + 11,
+                y: this.y + (15 * this.count),
                 dx: 0,
                 dy: this.speed,
                 width: this.width,
@@ -59,7 +79,7 @@ export default {
     },
 
     move() {
-        this.list.forEach((bullet, bullet_index) => {
+        this.list.forEach((bullet) => {
             bullet.y -= bullet.dy
             bullet.x -= bullet.dx
 
@@ -71,16 +91,15 @@ export default {
             // смотрим, побили ли мы что-нибудь
             for (let enemyIDX in Game.enemy.list) {
                 let enemy = Game.enemy.list[enemyIDX]
-                if (enemy.killing)
+                if (enemy.killing) {
                     continue;
+                }
 
-                if (this.isCollised(enemy, bullet_index)) {
+                if (isCollised({ ...enemy }, { ...bullet })) {
                     // бъем по поражению / противнику
                     Game.enemy.hit(enemyIDX)
-
                     // убираем пулю / снаряд
                     bullet.readyToRemove = true
-
                     return;
                 }
             }
@@ -88,44 +107,23 @@ export default {
         })
     },
 
-    isCollised(enemy, bullet_index) {
-        let bullet = this.list[bullet_index]
-        let bulletStartX = bullet.x
-        let bulletStopX = bullet.x + bullet.width
-        let bulletStartY = bullet.y - bullet.dy
-        let bulletStopY = bullet.y + bullet.height - bullet.dy
+    up() {
+        let currentIndex = this.levels.indexOf(this.type)
 
-        return enemy.x + enemy.width > bulletStartX
-            && enemy.x < bulletStopX
-            && enemy.y + enemy.height / 1.5 > bulletStartY
-            && enemy.y < bulletStopY;
-    },
-
-    upTo(type) {
-        switch (type) {
-            case 'fast':
-            case 'boss':
-                this.type = 'fast'
-                break;
-            case 'stronger':
-            case 'secondary':
-                this.type = 'secondary'
-                break;
-            default:
-                this.type = 'default'
+        if (++currentIndex > this.levels.length - 1) {
+            currentIndex = this.levels.length - 1
         }
 
-        setTimeout(() => {
-            this.down()
-        }, 10000)
+        this.type = this.levels[currentIndex]
     },
 
     down() {
-        let levels = ["default", "secondary", "fast"]
-        let currentIndex = levels.indexOf(this.type)
+        let currentIndex = this.levels.indexOf(this.type)
+
         if (--currentIndex < 0) {
             currentIndex = 0
         }
-        this.type = levels[currentIndex]
+
+        this.type = this.levels[currentIndex]
     },
 }

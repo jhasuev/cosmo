@@ -76,20 +76,20 @@ const Game = {
             let loadedCount = 0
 
             for (let asset in this.assets) {
-                let url = this.assets[asset].img || this.assets[asset]
-
                 let img = new Image()
-                img.src = url
+
+                if (typeof this.assets[asset] == 'object') {
+                    img.src = this.assets[asset].img
+                    this.assets[asset].img = img
+                } else {
+                    img.src = this.assets[asset]
+                    this.assets[asset] = img
+                }
+
                 img.onload = () => {
                     if (imagesCount > ++loadedCount) {
                         resolve()
                     }
-                }
-
-                if (this.assets[asset].img) {
-                    this.assets[asset].img = img
-                } else {
-                    this.assets[asset] = img
                 }
             }
         })
@@ -97,35 +97,8 @@ const Game = {
 
     start() {
         this.run()
-
-        setInterval(() => {
-            this.bullet.add()
-        }, this.bullet.create_interval)
-
-
+        this.bullet.start()
         this.enemy.add()
-    },
-
-    render() {
-        this.ctx.drawImage(this.assets.bg, 0, 0, this.width, this.height)
-
-        // user
-        const userAsset = this.user.killing ? this.assets.user_die : this.assets.user
-        this.user.render(this.ctx, userAsset)
-
-        this.enemy.render(this.ctx)
-
-        this.bullet.list.forEach(bullet => {
-            this.ctx.drawImage(
-                this.assets.bullet,
-                bullet.x,
-                bullet.y,
-                bullet.width,
-                bullet.height
-            )
-        })
-
-        this.info.render(this.ctx)
     },
 
     run() {
@@ -151,6 +124,15 @@ const Game = {
         this.enemy.move()
     },
 
+    render() {
+        this.ctx.drawImage(this.assets.bg, 0, 0, this.width, this.height)
+
+        this.user.render(this.ctx)
+        this.enemy.render(this.ctx)
+        this.bullet.render(this.ctx)
+        this.info.render(this.ctx)
+    },
+
     setPositions() {
         // установка позиции игрока
         this.user.x = this.movement.x - this.user.width / 2
@@ -161,6 +143,21 @@ const Game = {
         this.bullet.y = this.user.y - this.bullet.height
     },
 
+    dieRestart(){
+        this.bullet.stop()
+        this.user.kill(this.assets.user_die).then(() => {
+            Game.enemy.enemiesGoBack().then(() => {
+                if (this.info.lives <= 0) {
+                    this.info.setDefault()
+                }
+                this.user.killing = false
+                this.user.frame = 0
+                this.movement.setPositionsDefault()
+                this.info.lives -= 1
+                this.bullet.start()
+            })
+        })
+    },
 }
 
 export default Game

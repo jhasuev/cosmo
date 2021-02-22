@@ -9,8 +9,9 @@ export default {
     killing: false,
     frame: 0,
 
-    render(ctx, asset) {
-        const {img, frames} = asset
+    render(ctx) {
+        const asset = this.killing ? Game.assets.user_die : Game.assets.user
+        const { img, frames } = asset
 
         const sx = img.width / frames * this.frame
         const sy = 0
@@ -28,23 +29,9 @@ export default {
             let killingInterval = setInterval(() => {
                 if (++this.frame >= asset.frames) {
                     clearInterval(killingInterval)
-                    this.killing = false
-                    this.frame = 0
                     resolve()
                 }
             }, 1000 / 24)
         })
-    },
-
-    isCollised({x, y, width, height}) {
-        let bulletStartX = x
-        let bulletStopX = x + width
-        let bulletStartY = y
-        let bulletStopY = y + height
-
-        return this.x + this.width > bulletStartX
-            && this.x < bulletStopX
-            && this.y + this.height / 1.5 > bulletStartY
-            && this.y < bulletStopY;
     },
 }

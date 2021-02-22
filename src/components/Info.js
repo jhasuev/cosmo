@@ -6,7 +6,6 @@ export default {
     lives: null,
 
     render(ctx) {
-        let a = 1;
         let fz = 20
         let offsets = 10
         let box_width = 150
@@ -24,9 +23,14 @@ export default {
         // текста
         ctx.fillStyle = '#fff'
         ctx.font = `bold ${fz}px "Trebuchet MS"`
-        ctx.fillText(`Lives: ${this.lives}`, 0 + offsets, y + offsets + fz, box_width - offsets * 2)
-        ctx.fillText(`Scores: ${this.scores}`, 0 + offsets, y + offsets + fz * 2, box_width - offsets * 2)
-        ctx.fillText(`Record: ${this.recordScores}`, 0 + offsets, y + offsets + fz * 3, box_width - offsets * 2)
+        let texts = [
+            `Lives: ${this.lives}`,
+            `Scores: ${this.scores}`,
+            `Record: ${this.recordScores}`,
+        ]
+        texts.forEach((text, index) => {
+            ctx.fillText(text, 0 + offsets, y + offsets + fz * (index + 1), box_width - offsets * 2)
+        })
         ctx.fill()
     },
 

@@ -1,14 +1,13 @@
 import Game from "../index";
+import { isCollised } from '../helper'
 
 export default {
+    levelUpTimer: null,
     list: [],
-    enemy_conf: {
-        xp: {
-            normal: 10,
-            stronger: 20,
-            boss: 30,
-        },
-        xp_coef: 1,
+    xp: {
+        normal: 10,
+        stronger: 20,
+        boss: 30,
     },
 
     move() {
@@ -29,25 +28,11 @@ export default {
             }
 
             // проверка столкновений/коллизий с игроком
-            if (Game.user.isCollised({...enemy}) && !Game.user.killing) {
-                this.list.forEach(enemy => {
-                    enemy._dy = enemy.dy
-                    enemy.dy = -Game.height / 24
-                })
-                Game.user.kill(Game.assets.user_die).then(() => {
-                    Game.movement.setPositionsDefault()
-                    Game.info.lives -= 1
-
-                    if (Game.info.lives <= 0) {
-                        Game.info.setDefault()
-                    }
-
-                    this.list.forEach(enemy => {
-                        enemy.dy = enemy._dy
-                        enemy.y = 0 - enemy.height * 1.5
-                        delete enemy._dy
-                    })
-                })
+            if (isCollised({ ...enemy }, { ...Game.user }) && !Game.user.killing) {
+                Game.dieRestart()
+            }
+            if (enemy.y > Game.height - enemy.height && !Game.user.killing) {
+                Game.dieRestart()
             }
         })
     },
@@ -55,12 +40,12 @@ export default {
     add() {
         for (let i = 0; i < 5; i++) {
             let type = this.getRandomType()
-            let {width, height} = Game.assets[`enemy_${type}`].img
+            let { width, height } = Game.assets[`enemy_${type}`].img
 
             width /= 4
             height /= 4
 
-            let xp = Math.floor(this.enemy_conf.xp[type] * this.enemy_conf.xp_coef)
+            let xp = Math.floor(this.xp[type] * this.getCoef())
 
             this.list.push({
                 type,
@@ -79,6 +64,20 @@ export default {
                 height: height,
             })
         }
+
+        // console.log(this.list)
+    },
+
+    getCoef(){
+        let xp_coef = 1
+
+        if (Game.info.scores > 10) xp_coef = 1.5
+        if (Game.info.scores > 20) xp_coef = 2
+        if (Game.info.scores > 30) xp_coef = 3
+        if (Game.info.scores > 40) xp_coef = 4
+        if (Game.info.scores > 50) xp_coef = 5
+
+        return xp_coef
     },
 
     getRandomType() {
@@ -91,19 +90,27 @@ export default {
         let enemy = this.list[index]
         enemy.xp -= 1
 
-        if (enemy.xp <= 0) {
-            if (enemy.type != 'normal') {
-                Game.bullet.upTo(enemy.type)
+        if (enemy.xp <= 0 && !enemy.killing) {
+            if (enemy.type !== 'normal') {
+                Game.bullet.up()
             }
+            this.levelUpTimer = clearInterval(this.levelUpTimer)
+            this.levelUpTimer = setInterval(() => {
+                Game.bullet.down()
+            }, 10 * 1000)
 
             enemy.killing = true
             enemy.type = `${enemy.type}_die`
 
+            this.removeEnemiesTimer = clearTimeout(this.removeEnemiesTimer)
             this.kill(index).then(() => {
-                this.list.splice(index, 1)
-                if (this.list.length == 0) {
-                    this.add()
-                }
+                enemy.must_remove = true
+                this.removeEnemiesTimer = setTimeout(() => {
+                    this.list = this.list.filter(enemy => !enemy.must_remove)
+                    if (this.list.length === 0) {
+                        this.add()
+                    }
+                },1000 / 24)
             })
 
             Game.info.scoreUp()
@@ -162,6 +169,36 @@ export default {
             ctx.fillStyle = fillStyle
             ctx.rect(x, y, xp_width, h)
             ctx.fill()
+        })
+    },
+
+    enemiesGoBack() {
+        return new Promise(resolve => {
+            let enemyHeight = 0
+            this.list.forEach(enemy => {
+                enemy._dy = enemy.dy
+                enemy.dy = -1
+
+                if (enemyHeight < enemy.height) {
+                    enemyHeight = enemy.height
+                }
+            })
+
+            let goBackInterval = setInterval(() => {
+                this.list.forEach(enemy => {
+                    enemy.dy *= 1.45
+                })
+
+                let maxY = this.list.reduce((max, current) => current.y > max ? current.y : max, -enemyHeight)
+                if (maxY <= -enemyHeight) {
+                    goBackInterval = clearInterval(goBackInterval)
+                    this.list.forEach(enemy => {
+                        enemy.dy = enemy._dy
+                        enemy.y = 0 - enemy.height * 1.5
+                    })
+                    resolve()
+                }
+            }, 1000 / 24)
         })
     },
 }
